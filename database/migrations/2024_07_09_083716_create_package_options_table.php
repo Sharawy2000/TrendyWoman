@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('package_options', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('package_id')->constrained()->cascadeOnDelete();
+            $table->string('type');
+            $table->string('value');
+            $table->string('price');
             $table->timestamps();
         });
     }
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('package_options');
     }
 };

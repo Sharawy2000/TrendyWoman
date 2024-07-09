@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('system_texts', function (Blueprint $table) {
             $table->id();
+            $table->string('page_name');
+            $table->string('text');
             $table->timestamps();
         });
     }

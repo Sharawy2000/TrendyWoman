@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('home_page_slides', function (Blueprint $table) {
             $table->id();
+            $table->string('title')->nullable();
+            $table->string('description')->nullable();
+            $table->string('image');
+            $table->string('link');
             $table->timestamps();
         });
     }

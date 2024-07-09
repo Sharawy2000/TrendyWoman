@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('user_updates', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('code');
+            $table->string('new_phone');
             $table->timestamps();
         });
     }
