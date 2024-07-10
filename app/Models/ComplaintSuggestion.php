@@ -8,4 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class ComplaintSuggestion extends Model
 {
     use HasFactory;
+
+    //fillable
+    protected $fillable = [
+        'user_id',
+        'user_name',
+        'body'
+    ];
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 }

@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class HomePageSlide extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'description',
+        'image',
+        'link',
+    ];
 }

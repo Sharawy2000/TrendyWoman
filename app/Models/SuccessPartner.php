@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class SuccessPartner extends Model
 {
     use HasFactory;
+
+    protected $fillable=[
+        'image',
+    ];
+    
 }

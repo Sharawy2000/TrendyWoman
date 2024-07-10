@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class SystemText extends Model
 {
     use HasFactory;
+
+    protected $fillable=[
+        'page_name',
+        'image',
+    ];
+
+    public function settings(){
+        return $this->hasMany(Setting::class);
+    }
+    
 }
