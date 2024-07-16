@@ -52,7 +52,7 @@ class ResetPasswordController extends Controller
         // $token = Hash::make($request->code);
     
         if ($reset_code) {
-    
+            Session::put('code_initiated', true);
             return redirect()->route('change-password');
         }
         return redirect()->back()->with('error', 'Invalid code');

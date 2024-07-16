@@ -19,6 +19,7 @@ class PasswordResetM
         if (!Session::has('forgot_password_initiated')) {
             return redirect()->route('password.request')->with('error', 'Please initiate the forgot password process first.');
         }
+        
         return $next($request);
     }
 }
