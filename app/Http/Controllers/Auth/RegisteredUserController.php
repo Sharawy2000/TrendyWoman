@@ -35,18 +35,22 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'phone_number'=>['required','numeric','unique:'.User::class],
         ]);
-
+        $code=111111;
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'phone_number'=>$request->phone_number
+            'phone_number'=>$request->phone_number,
+            'code'=>$code,
+
         ]);
 
-        event(new Registered($user));
+        return redirect()->route('phone-confirm');
 
-        Auth::login($user);
+        // event(new Registered($user));
 
-        return redirect(route('home'));
+        // Auth::login($user);
+
+        // return redirect(route('home'));
     }
 }

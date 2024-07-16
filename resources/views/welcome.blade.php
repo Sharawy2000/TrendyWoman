@@ -29,6 +29,10 @@
                         {{ __('Log Out') }}
                     </x-dropdown-link>
                 </form>
+                <div>
+
+                    <a href="{{route('home')}}">Home</a>
+                </div>
             @else
                 
                 <div>
