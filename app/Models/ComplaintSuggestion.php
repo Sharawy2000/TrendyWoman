@@ -9,7 +9,6 @@ class ComplaintSuggestion extends Model
 {
     use HasFactory;
 
-    //fillable
     protected $fillable = [
         'user_id',
         'user_name',

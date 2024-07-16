@@ -9,7 +9,6 @@ class ContactWithUS extends Model
 {
     use HasFactory;
 
-    //fillabe
     protected $fillable = [
         'email',
         'phone_number'
