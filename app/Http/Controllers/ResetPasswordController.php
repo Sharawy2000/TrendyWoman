@@ -25,7 +25,8 @@ class ResetPasswordController extends Controller
 
         if ($user) {
             //create code 
-            $code = rand(100000, 999999);
+            // $code = rand(100000, 999999);
+            $code=111111;
             $reset=new ResetPassword();
             $reset->user_id=$user->id;
             $reset->code=$code;
