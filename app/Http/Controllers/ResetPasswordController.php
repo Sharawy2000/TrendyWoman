@@ -19,14 +19,13 @@ class ResetPasswordController extends Controller
             'phone_number' => 'required|string',
         ]);
 
-        // if phone number in user table 
+        Session::put('phone_number',$request->phone_number);
+
         $user = User::where('phone_number', $request->phone_number)->first();
-        
-        // dd($user);
 
         if ($user) {
             //create code 
-            $code = 111111;
+            $code = rand(100000, 999999);
             $reset=new ResetPassword();
             $reset->user_id=$user->id;
             $reset->code=$code;
@@ -67,10 +66,13 @@ class ResetPasswordController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
         $user = User::where('phone_number',$request->phone_number)->first();
+
+
         if($user){
-    
+
             $user->password = Hash::make($request->password);
             $user->save();
+            ResetPassword::where('user_id',$user->id)->delete();
             return redirect()->route('login')->with('success', 'Password changed successfully');
             
         }else{
@@ -97,8 +99,6 @@ class ResetPasswordController extends Controller
             if ($user->code==$request->code){
 
                 event(new Registered($user));
-
-                // Auth::login($user);
 
                 return redirect(route('login'));
             }

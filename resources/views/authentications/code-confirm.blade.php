@@ -3,6 +3,7 @@
     <div class="login-box">
         <form action="{{route('code.verify')}}" method="post">
             @csrf
+            <h2>Verify Code</h2>
             <div class="form-group">
                 <label for="code">Code</label>
                 <input style="margin: 20px 0 0 0" type="string" name="code" id="code" class="form-control" required autofocus>

@@ -3,13 +3,10 @@
     <div class="login-box">
         <form action="{{route('phone-verify')}}" method="post">
             @csrf
-            <div class="form-group">
-                <label for="phone_number">Phone Number</label>
-                <input style="margin: 20px 0 0 0" type="string" name="phone_number" id="phone_number" class="form-control" required autofocus>
-                @error('phone_number')
-                    <span class="text-danger">{{$message}}</span>  
-                @enderror
-            </div>
+            <h2>Verify Phone</h2>
+
+            <input type="hidden" name="phone_number" value="{{ Session::get('phone_number')}}">
+
             <div class="form-group">
                 <label for="code">Code</label>
                 <input style="margin: 20px 0 0 0" type="string" name="code" id="code" class="form-control" required autofocus>

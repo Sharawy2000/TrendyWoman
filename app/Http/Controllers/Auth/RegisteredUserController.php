@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -42,8 +43,8 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'phone_number'=>$request->phone_number,
             'code'=>$code,
-
         ]);
+        Session::put('phone_number',$user->phone_number);
 
         return redirect()->route('phone-confirm');
 

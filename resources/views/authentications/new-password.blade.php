@@ -3,19 +3,12 @@
     <div class="login-box">
         <form action="{{route('reset-password')}}" method="post">
             @csrf
+            <h2>Reset Password</h2>
+
+            <input type="hidden" name="phone_number" value="{{ Session::get('phone_number')}}">
 
             <div class="form-group">
-                <label for="phone_number">Phone Number</label>
-                <input style="margin: 20px 0 0 0" type="string" name="phone_number" id="phone_number" class="form-control" placeholder="Enter your Phone" required autofocus>
-                @error('phone_number')
-                    <span class="text-danger">{{$message}}</span>  
-                @enderror
-            </div>
-
-            {{-- <input type="hidden" name="token" value="{{ $token }}"> --}}
-
-            <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password">New Password</label>
                 <input style="margin: 20px 0 0 0" type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required autofocus>
                 @error('password')
                     <span class="text-danger">{{$message}}</span>  
@@ -25,7 +18,7 @@
                 <label for="password_confirmation">Confirm Password</label>
                 <input style="margin: 20px 0 0 0" type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Enter your password" required autofocus>
             </div>
-            <button style="margin: 20px 0 0 0" type="submit" class="btn btn-primary">Reset Password</button>
+            <button style="margin: 20px 0 0 0" type="submit" class="btn btn-primary">Reset</button>
 
         </form>
     </div>
