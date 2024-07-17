@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\ResetPassword;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
 // use Validator;
@@ -23,7 +22,6 @@ class AuthController extends Controller
      */
     
     public function register(Request $request) {
-
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email',
@@ -34,7 +32,6 @@ class AuthController extends Controller
         if($validator->fails()){
             return response()->json($validator->errors()->toJson(), 400);
         }
-
         $code=111111;
 
         $user = new User;
@@ -48,7 +45,6 @@ class AuthController extends Controller
 
         return response()->json($user, 201);
     }
- 
  
     /**
      * Get a JWT via given credentials.
@@ -123,20 +119,18 @@ class AuthController extends Controller
         $user=auth()->user();
 
         if(!Hash::check($request->password,$user->password)){
-    
-            return response_data("","Password is not correct",404);
-        }
-            
-        Cache::put('phone_number' . $user->id, $request->phone_number, now()->addMinutes(10));
 
+            return response_data("","Password is not correct",404);
+            
+        }
+    
         $code=111111;
         $reset=new ResetPassword();
         $reset->user_id=$user->id;
         $reset->code=$code;
         $reset->save();
-
+    
         return response_data($reset,"Code is Send");
-
     }
 
     /**
@@ -144,11 +138,11 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function phone_code(Request $request){
+    public function phone_code(Request $request,$new_phone){
         $request->validate([
             'code'=>'required|numeric',
         ]);
-
+        
         $user=auth()->user();
         $reset = ResetPassword::where('user_id', $user->id)->first();
 
@@ -157,13 +151,9 @@ class AuthController extends Controller
             return response_data("","Code is not correct",404);
         }
 
-        $newPhoneNumber = Cache::get('phone_number' . $user->id);
-
         $user=User::find($user->id);
         
-        $user->update(['phone_number'=>$newPhoneNumber]);
-
-        Cache::forget('phone_number' . $user->id);
+        $user->update(['phone_number'=>$new_phone]);
 
         return response_data($user,"Phone has been changed");
 

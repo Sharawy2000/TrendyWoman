@@ -16,7 +16,7 @@ Route::group([
     Route::post('/me', [AuthController::class, 'me'])->middleware('auth:api')->name('me');
     Route::post('/update',[AuthController::class,'update_profile'])->middleware('auth:api')->name('update-profile');
     Route::post('/update-phone',[AuthController::class,'update_phone'])->middleware('auth:api')->name('update-phone');
-    Route::post('/phone-code',[AuthController::class,'phone_code'])->middleware('auth:api')->name('phone-code');
+    Route::post('/phone-code/{new_phone}',[AuthController::class,'phone_code'])->middleware('auth:api')->name('phone-code');
 });
 
 Route::group([
