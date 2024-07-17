@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
@@ -14,18 +15,57 @@ use Illuminate\Support\Str;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth','admin','verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth','admin','verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/home',[HomeController::class,'index'])->name('home');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// Route::middleware('auth')->group(function () {
+//     Route::get('/home',[HomeController::class,'index'])->name('home');
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
+
+// require __DIR__.'/auth.php';
+
+// Route::get('register', [UserController::class, 'login'])
+//                 ->name('register');
+
+// Route::get('login', [UserController::class, 'register'])
+//                 ->name('login');
+
+Route::group([
+
+    'prefix'=> "auth/",
+
+],function (){
+
+    Route::group([
+
+        'prefix' => 'user',
+        'controller'=>UserController::class,
+
+    ], function () {
+
+        Route::post('/login', 'login');
+        Route::post('/register', 'register');
+        Route::post('/logout', 'logout');
+        Route::post('/refresh', 'refresh');
+        Route::put('/edit', 'update');
+        Route::get('/{token}', 'verify_email');
+        Route::post('/user-profile/{id}', 'userProfile');
+        // Route::post('/profileimg','update_profileIMG');
+        // Route::get('/show/posts','show_posts');
+        // Route::post('/store-fcm-token', 'FCMTokenController');
+        // Route::get('/show/seller/notifications','show_seller_notifications');
+        // Route::get('/show/buyer/notifications','show_buyer_notifications');
+        // Route::get('/show/seller/confirm-notifications','seller_confirm_notification');
+        // Route::get('/show/buyer/confirm-notifications','buyer_confirm_notification');
+        // Route::get('/show/buyer/responses','buyer_responses');
+
+
+    });
 });
-
-require __DIR__.'/auth.php';
 
 
 Route::get('/phone-verify', [ResetPasswordController::class,'phone_verify'])->name('phone-confirm');
