@@ -18,6 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\Admin::class,
             'password_reset'=>\App\Http\Middleware\PasswordResetM::class,
         ]);
+        // $middleware->api(prepend: [
+        //     \Illuminate\Cookie\Middleware\EncryptCookies::class,
+        //     \Illuminate\Session\Middleware\StartSession::class,
+        // ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (AuthenticationException $e, Request $request) {

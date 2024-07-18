@@ -22,13 +22,23 @@ class ResetPasswordController extends Controller
         $user = User::where('phone_number', $request->phone_number)->first();
 
         if ($user) {
+
             $code=111111;
+
+            $old=ResetPassword::where('user_id',$user->id)->first();
+
+            if($old){
+                $old->update(['code'=>$code]);
+                return response_data($old,"New code is send");
+
+            }
+
             $reset=new ResetPassword();
             $reset->user_id=$user->id;
             $reset->code=$code;
             $reset->save();
 
-            return response_data($reset,"Code is Send");
+            return response_data($reset,"Code is send");
         } 
         else {
             return response_data("","User not found",401);
@@ -47,6 +57,7 @@ class ResetPasswordController extends Controller
             'code'=>'required|numeric',
         ]);
         $reset = ResetPassword::where('code', $request->code)->first();
+
         // generate random big string token
 
         $token = bin2hex(random_bytes(32));

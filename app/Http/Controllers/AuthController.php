@@ -31,8 +31,13 @@ class AuthController extends Controller
  
         if($validator->fails()){
             return response()->json($validator->errors()->toJson(), 400);
+
         }
         $code=111111;
+
+        //
+        $token = bin2hex(random_bytes(32));
+        //
 
         $user = new User;
         $user->name = $request->name;
@@ -41,9 +46,15 @@ class AuthController extends Controller
         $user->phone_number=$request->phone_number;
         $user->is_active=false;
         $user->activation_code=$code;
+
+        //
+        $user->code=$token;
+        //
+
         $user->save();
 
-        return response()->json($user, 201);
+        return response_data($user,'Successfully signed up ',201);
+
     }
  
     /**
@@ -56,52 +67,55 @@ class AuthController extends Controller
         $credentials = request(['phone_number', 'password']);
 
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response_data('','Unauthorized',401);
+
         }
 
         if (auth()->user()->email_verified_at==null){
 
-            return response()->json(['error' => 'Pending Unauthorized'], 401);
+            return response_data('','Account is not verified',401);
+            
         }
 
-        $user=User::where('id',auth()->user()->id);
+        $user=User::where('id',auth()->user()->id)->first();
         $user->update(['is_active'=>true]);
 
         return $this->respondWithToken($token);
     }
 
- 
     /**
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function verify_phone(Request $request,$phone)
+    public function verify_phone(Request $request,$token)
     {
         $request->validate([
             'code'=>'required|numeric',
         ]);
-
-        $user=User::where('phone_number',$phone)->first();
+        
+        // code column => verification token 
+        $user=User::where('code',$token)->first();
         
         if($user){
 
             if ($user->activation_code==$request->code){
 
-                $user->update(['email_verified_at'=>now()]);
+                $user->update(['email_verified_at'=>now(),'code'=>null]);
 
-                return response()->json(['message' => 'Successfully','user' => $user]);
+                return response_data($user,'Successfully verified');
 
             }
             
             else{
 
-                return response()->json(['error' => 'Code Unauthorized'], 401);
-
+                return response_data('','Invalid Code',401);
 
             }
         
         }else{
-            return response()->json(['error' => 'User Unauthorized'], 401);
+            return response_data('','User not found',401);
+
+            
 
 
         }
@@ -129,6 +143,13 @@ class AuthController extends Controller
         $reset->user_id=$user->id;
         $reset->code=$code;
         $reset->save();
+
+        $user=User::find($user->id);
+
+        //Another way , store new phone in code column 
+        $user->update(['code'=>$request->phone_number]);
+        //
+
     
         return response_data($reset,"Code is Send");
     }
@@ -138,7 +159,8 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function phone_code(Request $request,$new_phone){
+    public function phone_code(Request $request){
+
         $request->validate([
             'code'=>'required|numeric',
         ]);
@@ -146,14 +168,18 @@ class AuthController extends Controller
         $user=auth()->user();
         $reset = ResetPassword::where('user_id', $user->id)->first();
 
-        if (!$reset->code==$request->code) {
+        $user=User::find($user->id);
 
+        if (!$reset->code==$request->code) {
             return response_data("","Code is not correct",404);
         }
 
-        $user=User::find($user->id);
         
-        $user->update(['phone_number'=>$new_phone]);
+        // $user->update(['phone_number'=>$new_phone]);
+
+        // set new password and set code column null 
+
+        $user->update(['phone_number'=>$user->code,'code'=>null]);
 
         return response_data($user,"Phone has been changed");
 
@@ -188,14 +214,14 @@ class AuthController extends Controller
 
             }
 
-            return response()->json(['message'=>'Succefully updated']);
+            return response_data("",'Succefully updated');
+
             
         }else{
 
             return response_data("",$validator->errors(),422);
         
        }
-
 
     }
 
@@ -206,7 +232,8 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        return response_data(auth()->user(),"");
+
     }
  
     /**
@@ -216,11 +243,12 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        $user=User::where('id',auth()->user()->id);
+        $user=User::find(auth()->user()->id);
         $user->update(['is_active'=>false]);
 
         auth()->logout();
-        return response()->json(['message' => 'Successfully logged out']);
+        return response_data('',"Successfully logged out");
+
     }
  
     /**
@@ -231,6 +259,18 @@ class AuthController extends Controller
     public function refresh()
     {
         return $this->respondWithToken(auth()->refresh());
+    }
+    /**
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy()
+    {
+        $user=User::find(auth()->user()->id);
+        $user->update(['is_active'=>false,'phone_number'=>Hash::make($user->id)]);
+        $user->delete();
+        return response_data("","User has been deleted");
+
     }
  
     /**
